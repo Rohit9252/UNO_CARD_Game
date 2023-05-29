@@ -1,7 +1,31 @@
 package com.game.uno;
 
+import com.game.uno.models.Game;
+import com.game.uno.models.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
+
+    /**
+     * The entry point of the UNO game application.
+     */
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        Player player1 = new Player(1, "Player 1");
+        Player player2 = new Player(2, "Player 2");
+
+
+        // Create a list of players
+        List<Player> players = new ArrayList<>();
+        players.add(player1);
+        players.add(player2);
+
+
+        // Create a new game with the list of players
+        Game game = new Game(players);
+
+        // Start the game
+        game.start();
     }
 }
