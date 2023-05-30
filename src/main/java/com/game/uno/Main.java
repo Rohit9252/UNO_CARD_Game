@@ -12,14 +12,13 @@ public class Main {
      * The entry point of the UNO game application.
      */
     public static void main(String[] args) {
-        Player player1 = new Player(1, "Player 1");
-        Player player2 = new Player(2, "Player 2");
+        Player player1 = new Player( "Player 1");
+        Player player2 = new Player( "Player 2");
 
 
         // Create a list of players
-        List<Player> players = new ArrayList<>();
-        players.add(player1);
-        players.add(player2);
+        List<Player> players = List.of(player1, player2);
+
 
 
         // Create a new game with the list of players

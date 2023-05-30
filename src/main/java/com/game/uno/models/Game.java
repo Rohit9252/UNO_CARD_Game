@@ -11,26 +11,15 @@ public class Game {
     private List<Player> players;
     private Deck deck;
     private Card lastPlayedCard;
-    private int currentPlayerIndex;
+    private Color currentColor;
     private boolean reverseDirection;
-
-    /**
-     * Constructor for the Game class.
-     * @param players The list of players in the game
-     */
+    private int currentPlayerIndex;
 
     public Game(List<Player> players) {
         this.players = players;
-        this.deck = new Deck();
-        this.lastPlayedCard = null;
-        this.currentPlayerIndex = 0;
-        this.reverseDirection = false;
+        deck = new Deck();
     }
 
-    /**
-     * Starts the game by distributing initial cards to players, determining the first player, and initiating the game loop.
-     * The game loop continues until a player wins.
-     */
     public void start() {
         // Distribute initial cards to players
         for (Player player : players) {
@@ -67,29 +56,28 @@ public class Game {
 
             if (!currentPlayer.hasValidCardToPlay(lastPlayedCard)) {
                 System.out.println("No valid cards to play. Drawing a card...");
-                Card drawnCard = currentPlayer.drawCard(deck);
-                System.out.println("You drew: " + drawnCard);
-                if (drawnCard.isValidPlay(lastPlayedCard)) {
-                    System.out.println("Playing the drawn card: " + drawnCard);
-                    currentPlayer.playCard(drawnCard, this);
+                currentPlayer.drawCard(deck);
+                if (currentPlayer.hasValidCardToPlay(lastPlayedCard)) {
+                    System.out.println("You drew a card that can be played.");
+                } else {
+                    System.out.println("You drew a card that cannot be played. Turn ends.");
                 }
+                nextPlayer();
             } else {
-                boolean validCardPlayed = false;
-                while (!validCardPlayed) {
-                    Card selectedCard = promptCardChoice(currentPlayer);
-                    if (selectedCard == null) {
-                        System.out.println("Drawing a card...");
-                        Card drawnCard = currentPlayer.drawCard(deck);
-                        System.out.println("You drew: " + drawnCard);
-                        if (drawnCard.isValidPlay(lastPlayedCard)) {
-                            System.out.println("Playing the drawn card: " + drawnCard);
-                            currentPlayer.playCard(drawnCard, this);
-                            validCardPlayed = true;
-                        }
+                Card selectedCard = promptCardChoice(currentPlayer);
+                if (selectedCard == null) {
+                    System.out.println("Drawing a card...");
+                    currentPlayer.drawCard(deck);
+
+                    if (currentPlayer.hasValidCardToPlay(lastPlayedCard)) {
+                        System.out.println("You drew a card that can be played.");
                     } else {
-                        currentPlayer.playCard(selectedCard, this);
-                        validCardPlayed = true;
+                        System.out.println("You drew a card that cannot be played. Turn ends.");
                     }
+                    nextPlayer();
+                } else {
+                    currentPlayer.playCard(selectedCard, this);
+                    nextPlayer();
                 }
             }
 
@@ -97,10 +85,19 @@ public class Game {
                 gameEnded = true;
                 System.out.println("\n" + currentPlayer.getName() + " wins!");
             }
-
-            nextPlayer();
         }
     }
+
+    private void nextPlayer() {
+        int numPlayers = players.size();
+        if (reverseDirection) {
+            currentPlayerIndex = (currentPlayerIndex - 1 + numPlayers) % numPlayers;
+        } else {
+            currentPlayerIndex = (currentPlayerIndex + 1) % numPlayers;
+        }
+    }
+
+
 
 
     /**
@@ -110,9 +107,17 @@ public class Game {
      * @return the selected card to play, or null if the player chooses to draw a card
      */
     private Card promptCardChoice(Player currentPlayer) {
-        System.out.println("Choose a card to play (enter card index or 'draw' to draw a card): ");
         Scanner scanner = new Scanner(System.in);
+        List<Card> hand = currentPlayer.getHand();
+
+
+        System.out.println("Select a card to play (enter the index):");
+        for (int i = 0; i < hand.size(); i++) {
+            System.out.println(i + ": " + hand.get(i));
+        }
+        System.out.println("Choose a card to play (enter card index or 'draw' to draw a card): ");
         String input = scanner.nextLine();
+
 
         if (input.equalsIgnoreCase("draw")) {
             return null;
@@ -133,75 +138,38 @@ public class Game {
     }
 
 
-    /**
-     * Skips the turn of the next player in the game, based on the current direction of play.
-     * The player index is incremented or decremented based on the direction of play.
-     */
     public void skipNextPlayer() {
-        int increment = reverseDirection ? -1 : 1;
-        currentPlayerIndex = (currentPlayerIndex + increment + players.size()) % players.size();
+        nextPlayer();
+        System.out.println("Next player skipped.");
     }
 
-    /**
-     * Prompts the current player to choose a color for a wild card.
-     * The method reads user input to determine the chosen color, validates it, and updates the last played card accordingly.
-     * If the input is invalid, the method recursively prompts the player until a valid color choice is made.
-     */
-    public void promptColorChoice() {
-        // Prompt the current player to choose a color for the wild card
-        System.out.println("Choose a color (red, blue, green, yellow): ");
-        Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
-
-        if (input.equalsIgnoreCase("red") || input.equalsIgnoreCase("blue") ||
-                input.equalsIgnoreCase("green") || input.equalsIgnoreCase("yellow")) {
-            lastPlayedCard = new Card(Color.valueOf(input.toUpperCase()), lastPlayedCard.getValue());
-        } else {
-            System.out.println("Invalid color choice!");
-            promptColorChoice();
-        }
+    public void reverseDirection() {
+        reverseDirection = !reverseDirection;
+        System.out.println("Direction reversed: " + reverseDirection);
     }
 
-
-    /**
-     * Advances the game to the next player's turn based on the current direction of play.
-     * The player index is incremented or decremented based on the direction of play.
-     */
-    public void nextPlayer() {
-        int increment = reverseDirection ? -1 : 1;
-        currentPlayerIndex = (currentPlayerIndex + increment + players.size()) % players.size();
-    }
-
-
-    /**
-     * Sets the last played card to the specified card.
-     *
-     * @param card the card to set as the last played card
-     */
-    public void setLastPlayedCard(Card card) {
-        lastPlayedCard = card;
-    }
-
-    /**
-     * Retrieves the last played card in the game.
-     *
-     * @return the last played card
-     */
-    public Card getLastPlayedCard() {
-        return lastPlayedCard;
-    }
-
-
-    /**
-     * Draws the specified number of cards from the deck for the next player in turn.
-     * The cards are drawn from the deck and added to the next player's hand.
-     *
-     * @param numCards the number of cards to draw
-     */
     public void drawCards(int numCards) {
+        Player nextPlayer = players.get((currentPlayerIndex + 1) % players.size());
+        System.out.println("Next player draws " + numCards + " card(s).");
         for (int i = 0; i < numCards; i++) {
-            Player nextPlayer = players.get((currentPlayerIndex + 1) % players.size());
             nextPlayer.drawCard(deck);
         }
     }
+
+    public Color promptColorChoice() {
+        Color[] colors = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW};
+        int randomIndex = (int) (Math.random() * colors.length);
+        return colors[randomIndex];
+    }
+
+    public void setCurrentColor(Color color) {
+        currentColor = color;
+    }
+
+    public void setLastPlayedCard(Card card) {
+        lastPlayedCard = card;
+    }
 }
+
+
+

@@ -24,43 +24,40 @@ public class Card {
         return value;
     }
 
-    /**
-     * Checks if the card is a valid play based on the current card in play.
-     *
-     * @param currentCard the current card in play
-     * @return true if the card is a valid play, false otherwise
-     */
-    public boolean isValidPlay(Card currentCard) {
-        return color == currentCard.getColor() || value == currentCard.getValue();
+
+    public boolean isSpecialActionCard() {
+        return value == Value.SKIP || value == Value.REVERSE || value == Value.DRAW_TWO;
     }
 
-    /**
-     * Checks if the card is a valid play based on the current game state.
-     *
-     * @param game the current game instance
-     * @return true if the card is a valid play, false otherwise
-     */
-    public boolean isValidPlay(Game game) {
-        Card currentCard = game.getLastPlayedCard();
-        return color == currentCard.getColor() || value == currentCard.getValue();
+    public boolean isWildCard() {
+        return value == Value.WILD || value == Value.WILD_DRAW_FOUR;
     }
 
-
-    /**
-     * Applies any special actions associated with the card to the game.
-     *
-     * @param game the current game instance
-     */
-    public void applyEffect(Game game) {
-        // Apply any special actions associated with the card
-        if (value == Value.SKIP || value == Value.REVERSE || value == Value.DRAW_TWO) {
-            game.skipNextPlayer();
-        } else if (value == Value.WILD) {
-            game.promptColorChoice();
-        } else if (value == Value.WILD_DRAW_FOUR) {
-            game.promptColorChoice();
-            game.drawCards(4);
-            game.skipNextPlayer();
+    public void performAction(Game game) {
+        // Perform special actions associated with the card
+        switch (value) {
+            case SKIP:
+                game.skipNextPlayer();
+                break;
+            case REVERSE:
+                game.reverseDirection();
+                break;
+            case DRAW_TWO:
+                game.drawCards(2);
+                game.skipNextPlayer();
+                break;
+            case WILD:
+                // Allow the player to choose a color
+                Color chosenColor = game.promptColorChoice();
+                game.setCurrentColor(chosenColor);
+                break;
+            case WILD_DRAW_FOUR:
+                // Allow the player to choose a color
+                Color chosenColor2 = game.promptColorChoice();
+                game.setCurrentColor(chosenColor2);
+                game.drawCards(4);
+                game.skipNextPlayer();
+                break;
         }
     }
 

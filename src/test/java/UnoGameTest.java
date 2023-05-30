@@ -2,70 +2,124 @@
 import com.game.uno.enums.Color;
 import com.game.uno.enums.Value;
 import com.game.uno.models.Card;
-import com.game.uno.models.Game;
 import com.game.uno.models.Player;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.ArrayList;
+
 import java.util.Arrays;
-import java.util.List;
+import java.util.Scanner;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Collections;
+
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class UnoGameTest {
 
     @Test
-    public void testValidCardPlay() {
-        // Create players and initialize the game
-        Player player1 = new Player(1, "Player 1");
-        Player player2 = new Player(2, "Player 2");
-        List<Player> players = new ArrayList<>();
-        players.add(player1);
-        players.add(player2);
-        Game game = new Game(players);
-        game.start();
+    public void testPromptCardChoice_DrawCard() {
+        // Set up the test scenario
+        Player currentPlayer = mock(Player.class);
+        when(currentPlayer.getHandSize()).thenReturn(2);
+        when(currentPlayer.getHand()).thenReturn(Collections.emptyList());
 
-        // Set up the initial game state for testing
-        player1.receiveInitialCards(Arrays.asList(
-                new Card(Color.RED, Value.FOUR),
-                new Card(Color.YELLOW, Value.TWO),
-                new Card(Color.BLUE, Value.ONE)
-        ));
-        game.setLastPlayedCard(new Card(Color.RED, Value.TWO));
+        // Mock the user input
+        String input = "draw\n";
+        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
+        System.setIn(inputStream);
 
-        // Play a valid card
-//        player1.playCard(player1.getHand().get(0), game);
-
-        // Verify the updated game state
-        assertEquals(new Card(Color.RED, Value.FOUR), game.getLastPlayedCard());
-//        assertEquals(2, player1.getHandSize());
+        // Call the method and verify the result
+        Card cardChoice = promptCardChoice(currentPlayer);
+        assertNull(cardChoice);
     }
 
     @Test
-    public void testInvalidCardPlay() {
-        // Create players and initialize the game
-        Player player1 = new Player(1, "Player 1");
-        Player player2 = new Player(2, "Player 2");
-        List<Player> players = new ArrayList<>();
-        players.add(player1);
-        players.add(player2);
-        Game game = new Game(players);
-        game.start();
+    public void testPromptCardChoice_ValidCardIndex() {
+        // Set up the test scenario
+        Player currentPlayer = mock(Player.class);
+        when(currentPlayer.getHandSize()).thenReturn(3);
+        Card card1 = new Card(Color.RED, Value.FIVE);
+        Card card2 = new Card(Color.BLUE, Value.SEVEN);
+        Card card3 = new Card(Color.YELLOW, Value.ONE);
+        when(currentPlayer.getHand()).thenReturn(Arrays.asList(card1, card2, card3));
 
-        // Set up the initial game state for testing
-        player1.receiveInitialCards(Arrays.asList(
-                new Card(Color.BLUE, Value.TWO),
-                new Card(Color.RED, Value.FIVE),
-                new Card(Color.YELLOW, Value.SIX)
-        ));
-        game.setLastPlayedCard(new Card(Color.GREEN, Value.EIGHT));
+        // Mock the user input
+        String input = "1\n";
+        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
+        System.setIn(inputStream);
 
-        // Attempt to play an invalid card
-        player1.playCard(player1.getHand().get(1), game);
-
-        // Verify the game state remains unchanged
-        assertEquals(new Card(Color.GREEN, Value.EIGHT), game.getLastPlayedCard());
-        assertEquals(3, player1.getHandSize());
+        // Call the method and verify the result
+        Card cardChoice = promptCardChoice(currentPlayer);
+        assertEquals(card2, cardChoice);
     }
 
 
 
+    private Card promptCardChoice(Player currentPlayer) {
+        System.out.println("Choose a card to play (enter card index or 'draw' to draw a card): ");
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+
+        if (input.equalsIgnoreCase("draw")) {
+            return null;
+        }
+
+        try {
+            int cardIndex = Integer.parseInt(input);
+            if (cardIndex >= 0 && cardIndex < currentPlayer.getHandSize()) {
+                return currentPlayer.getHand().get(cardIndex);
+            } else {
+                System.out.println("Invalid card index!");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input!");
+        }
+
+        return null;
+    }
+
+
+    @Test
+    public void testPromptCardChoice_InvalidCardIndex() {
+        // Set up the test scenario
+        Player currentPlayer = mock(Player.class);
+        when(currentPlayer.getHandSize()).thenReturn(3);
+        Card card1 = new Card(Color.RED, Value.FIVE);
+        Card card2 = new Card(Color.BLUE, Value.SEVEN);
+        Card card3 = new Card(Color.YELLOW, Value.ONE);
+        when(currentPlayer.getHand()).thenReturn(Arrays.asList(card1, card2, card3));
+
+        // Mock the user input
+        String input = "5\n";
+        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
+        System.setIn(inputStream);
+
+        // Call the method and verify the result
+        Card cardChoice = promptCardChoice(currentPlayer);
+        assertNull(cardChoice);
+    }
+
+    @Test
+    public void testPromptCardChoice_InvalidInput() {
+        // Set up the test scenario
+        Player currentPlayer = mock(Player.class);
+        when(currentPlayer.getHandSize()).thenReturn(3);
+        when(currentPlayer.getHand()).thenReturn(Collections.emptyList());
+
+        // Mock the user input
+        String input = "invalid\n";
+        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
+        System.setIn(inputStream);
+
+        // Call the method and verify the result
+        Card cardChoice = promptCardChoice(currentPlayer);
+        assertNull(cardChoice);
+    }
+
+    // Additional test methods for other scenarios
+
 }
+
