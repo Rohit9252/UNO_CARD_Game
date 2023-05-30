@@ -104,7 +104,7 @@ public class Game {
     /**
      * Moves the game to the next player based on the current direction.
      */
-    private void nextPlayer() {
+    public void nextPlayer() {
         int numPlayers = players.size();
         if (reverseDirection) {
             currentPlayerIndex = (currentPlayerIndex - 1 + numPlayers) % numPlayers;
@@ -160,7 +160,18 @@ public class Game {
      * Reverses the direction of play.
      */
     public void reverseDirection() {
+//        reverseDirection = !reverseDirection;
+//        System.out.println("Direction reversed: " + reverseDirection);
         reverseDirection = !reverseDirection;
+        System.out.println("Direction reversed: " + reverseDirection);
+
+        // Update the current player index based on the new direction
+        reverseDirection = !reverseDirection;
+        if (reverseDirection) {
+            currentPlayerIndex = (currentPlayerIndex - 1 + players.size()) % players.size();
+        } else {
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        }
         System.out.println("Direction reversed: " + reverseDirection);
     }
 
@@ -205,6 +216,26 @@ public class Game {
     public void setLastPlayedCard(Card card) {
         lastPlayedCard = card;
     }
+
+    public Card getLastPlayedCard() {
+        return lastPlayedCard;
+    }
+
+    public int getCurrentPlayerIndex() {
+        return currentPlayerIndex;
+    }
+
+    public boolean isReverseDirection() {
+        return reverseDirection;
+    }
+
+    public Player getCurrentPlayer() {
+        return players.get(currentPlayerIndex);
+    }
+
+
+
+
 }
 
 
