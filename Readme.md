@@ -1,35 +1,51 @@
 # Uno Game
 
-A simple implementation of the Uno card game in Java.
-
-## Introduction
-
-This project is a command-line version of the popular card game Uno. It allows two players to compete against each other, following the standard rules of Uno.
+The Uno Game is a simple implementation of the popular card game Uno. It allows two players to play against each other and follow the basic rules of the game.
 
 ## Features
 
-- Two-player game: Play against a friend in a head-to-head Uno match.
-- Card actions: Special action cards, such as Skip, Reverse, Draw Two, Wild, and Wild Draw Four, are implemented and applied during the game.
-- Interactive gameplay: Players can choose cards to play and make color choices for Wild cards.
+- Distribution of initial cards to players
+- Choosing a starting card
+- Playing valid cards from the player's hand
+- Drawing cards when no valid cards are available
+- Performing special actions associated with certain cards (skip, reverse, draw two, wild, wild draw four)
+- Tracking the current color of the game
+- Reversing the order of play
+- Ending the game when a player has no more cards
 
-## Installation
+## Requirements
 
-1. Ensure you have Java Development Kit (JDK) installed on your system.
-2. Clone the project repository: `git clone https://github.com/rohit9252/UNO_CARD_Game.git`
-3. Compile the source code: `javac UnoGame.java`
+To run the Uno Game, you need the following:
 
-## Usage
+- Java Development Kit (JDK) version 8 or later
+- Command line or an IDE (Integrated Development Environment) to compile and run Java code
 
-1. Run the game: `java UnoGame`
-2. Follow the on-screen instructions to play the game.
-3. Each player takes turns playing a card from their hand that matches the color or value of the last played card.
-4. If a player doesn't have a valid card to play, they must draw a card from the deck.
-5. Special action cards have specific effects, as described in the game rules.
-6. The game continues until one player has no cards left in their hand, declaring them as the winner.
+## How to Run
 
-## Contributing
-
-Contributions to this project are welcome. If you find any issues or want to suggest improvements, please create a new issue or submit a pull request.
-
+1. Clone or download the repository to your local machine.
+2. Open a command line or an IDE and navigate to the project directory.
+3. Compile the Java source files using the following command:
 
 
+4. Run the compiled program using the following command:
+    ```bash
+    javac -d bin src/*.java
+    ```
+
+
+
+5. Follow the instructions displayed in the console to play the game.
+
+## Customization
+
+You can customize the game by making changes to the code. Here are some possible modifications:
+
+- Implementing a different card game using the provided `Card` class as a starting point
+- Modifying the number of players by adding or removing `Player` objects in the `main` method of `UnoGame.java`
+- Adding additional rules or special action cards to the game
+
+
+## Acknowledgments
+
+- The Uno card game rules and concepts were created by Merle Robbins and have been popularized by Mattel.
+- The code in this project is a simplified implementation of the Uno game rules and does not include all possible variations or edge cases.
