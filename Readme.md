@@ -41,7 +41,7 @@ To run the Uno Game, you need the following:
 You can customize the game by making changes to the code. Here are some possible modifications:
 
 - Implementing a different card game using the provided `Card` class as a starting point
-- Modifying the number of players by adding or removing `Player` objects in the `main` method of `UnoGame.java`
+- Modifying the number of players by adding or removing `Player` objects in the `main` method of `Main.java`
 - Adding additional rules or special action cards to the game
 
 
