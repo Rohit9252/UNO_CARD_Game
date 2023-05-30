@@ -6,7 +6,12 @@ import com.game.uno.enums.Value;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-// Game class representing the game itself
+import java.util.List;
+import java.util.Scanner;
+
+/**
+ * Represents the Uno game.
+ */
 public class Game {
     private List<Player> players;
     private Deck deck;
@@ -15,11 +20,19 @@ public class Game {
     private boolean reverseDirection;
     private int currentPlayerIndex;
 
+    /**
+     * Constructs a new game with the given list of players.
+     *
+     * @param players the list of players participating in the game
+     */
     public Game(List<Player> players) {
         this.players = players;
         deck = new Deck();
     }
 
+    /**
+     * Starts the game by distributing initial cards to players, determining the first player, and beginning the game loop.
+     */
     public void start() {
         // Distribute initial cards to players
         for (Player player : players) {
@@ -88,6 +101,9 @@ public class Game {
         }
     }
 
+    /**
+     * Moves the game to the next player based on the current direction.
+     */
     private void nextPlayer() {
         int numPlayers = players.size();
         if (reverseDirection) {
@@ -96,9 +112,6 @@ public class Game {
             currentPlayerIndex = (currentPlayerIndex + 1) % numPlayers;
         }
     }
-
-
-
 
     /**
      * Prompts the current player to choose a card to play from their hand or choose to draw a card.
@@ -110,14 +123,12 @@ public class Game {
         Scanner scanner = new Scanner(System.in);
         List<Card> hand = currentPlayer.getHand();
 
-
         System.out.println("Select a card to play (enter the index):");
         for (int i = 0; i < hand.size(); i++) {
             System.out.println(i + ": " + hand.get(i));
         }
         System.out.println("Choose a card to play (enter card index or 'draw' to draw a card): ");
         String input = scanner.nextLine();
-
 
         if (input.equalsIgnoreCase("draw")) {
             return null;
@@ -137,17 +148,27 @@ public class Game {
         return null;
     }
 
-
+    /**
+     * Skips the next player's turn.
+     */
     public void skipNextPlayer() {
         nextPlayer();
         System.out.println("Next player skipped.");
     }
 
+    /**
+     * Reverses the direction of play.
+     */
     public void reverseDirection() {
         reverseDirection = !reverseDirection;
         System.out.println("Direction reversed: " + reverseDirection);
     }
 
+    /**
+     * Makes the next player draw a specified number of cards from the deck.
+     *
+     * @param numCards the number of cards to be drawn
+     */
     public void drawCards(int numCards) {
         Player nextPlayer = players.get((currentPlayerIndex + 1) % players.size());
         System.out.println("Next player draws " + numCards + " card(s).");
@@ -156,20 +177,34 @@ public class Game {
         }
     }
 
+    /**
+     * Prompts the current player to choose a color.
+     *
+     * @return the chosen color
+     */
     public Color promptColorChoice() {
         Color[] colors = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW};
         int randomIndex = (int) (Math.random() * colors.length);
         return colors[randomIndex];
     }
 
+    /**
+     * Sets the current color of the game.
+     *
+     * @param color the color to be set
+     */
     public void setCurrentColor(Color color) {
         currentColor = color;
     }
 
+    /**
+     * Sets the last played card in the game.
+     *
+     * @param card the last played card
+     */
     public void setLastPlayedCard(Card card) {
         lastPlayedCard = card;
     }
 }
-
 
 
